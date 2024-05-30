@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -25,11 +26,13 @@ public class CommentService {
 
     // 댓글 생성
     public Comment createComment(Long todoId, CommentRequestDto requestDto) {
-        Todo todo = todoRepository.findById(todoId).orElseThrow(() -> new IllegalArgumentException("Invalid todo ID"));
-        String content = requestDto.getContent();
+        Optional<Todo> optionalTodo = todoRepository.findById(todoId);
+        Todo todo = optionalTodo.orElseThrow(() -> new IllegalArgumentException("해당 할일Id는 존재하지않습니다."));
 
-        // 생성자를 사용하여 댓글 등록
-        Comment comment = new Comment(todo, content);
+        String content = requestDto.getContent();
+        Long userId = requestDto.getUserId();
+
+        Comment comment = new Comment(todo, content, userId);
         return commentRepository.save(comment);
     }
 

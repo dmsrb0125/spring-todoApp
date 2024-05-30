@@ -19,15 +19,16 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    // 댓글 생성 요청
     @PostMapping
     public Comment createComment(@PathVariable Long todoId, @RequestBody CommentRequestDto requestDto) {
         return commentService.createComment(todoId, requestDto);
     }
 
+    // 해당되는 댓글 전체 조회 요청
     @GetMapping
     public List<Comment> getComments(@PathVariable Long todoId) {
         return commentService.getComments(todoId);
     }
-
 
 }

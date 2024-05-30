@@ -28,6 +28,9 @@ public class Comment {
     private Todo todo; // 할일과 매핑(할일 : 댓글 -> 1:N 매핑)
 
     @Column(nullable = false)
+    private Long userId; // 사용자 ID
+
+    @Column(nullable = false)
     private String content; // 댓글내용
 
     @CreatedDate
@@ -35,9 +38,10 @@ public class Comment {
     private LocalDateTime createdAt; // 생성일자(자동생성)
 
     // 댓글 등록 생성자
-    public Comment(Todo todo, String content) {
+    public Comment(Todo todo, String content, Long userId) {
         this.todo = todo;
         this.content = content;
+        this.userId = userId;
     }
 
 }
