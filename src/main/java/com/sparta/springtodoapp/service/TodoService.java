@@ -45,4 +45,9 @@ public class TodoService {
         todo.setDescription(description);
         return todoRepository.save(todo);
     }
+
+    // 할일 삭제
+    public void deleteTodo(Long id) {
+        todoRepository.deleteById(id);
+    }
 }

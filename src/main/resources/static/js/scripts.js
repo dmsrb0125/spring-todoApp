@@ -89,17 +89,48 @@ function showEditForm() {
     document.getElementById('edit-section').style.display = 'block';
 }
 
-function editTodoForm(button, event) {
+function deleteTodoFromDetail() {
+    const id = document.getElementById('edit-id').value;
+
+    if (confirm('정말로 삭제하시겠습니까?')) {
+        fetch(`/api/todos/${id}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('할 일이 삭제되었습니다.');
+                    location.reload();
+                } else {
+                    alert('할 일 삭제에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('할 일 삭제에 실패했습니다.');
+            });
+    }
+}
+
+function deleteTodo(button, event) {
     event.stopPropagation();
     const todoItem = button.closest('.todo-item');
     const id = todoItem.getAttribute('data-id');
-    const title = todoItem.querySelector('h4').innerText;
-    const description = todoItem.querySelector('.description').innerText;
 
-    document.getElementById('edit-id').value = id;
-    document.getElementById('edit-title').value = title;
-    document.getElementById('edit-description').value = description;
-
-    showEditForm();
+    if (confirm('정말로 삭제하시겠습니까?')) {
+        fetch(`/api/todos/${id}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('할 일이 삭제되었습니다.');
+                    location.reload();
+                } else {
+                    alert('할 일 삭제에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('할 일 삭제에 실패했습니다.');
+            });
+    }
 }
-

@@ -21,6 +21,8 @@ public class TodoController {
     public TodoController(TodoService todoService) {
         this.todoService = todoService;
     }
+
+    // 할일 페이지 연결
     @GetMapping
     public String todo(Model model) {
         List<Todo> todos = todoService.getTodos(); // 저장된 할일 목록들
@@ -28,6 +30,7 @@ public class TodoController {
         return "todo";
     }
 
+    // 할일 등록 요청
     @PostMapping
     @ResponseBody
     public Todo createTodo(@RequestBody TodoRequestDto todoRequestDto) {
@@ -35,10 +38,19 @@ public class TodoController {
     }
 
 
+    // 할일 수정 요청
     @PutMapping("/{id}")
     @ResponseBody
     public Todo updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto todoRequestDto) {
         return todoService.updateTodo(id, todoRequestDto);
     }
 
+    // 할일 삭제 요청
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    public void deleteTodo(@PathVariable Long id) {
+        todoService.deleteTodo(id);
+    }
 }
+
+

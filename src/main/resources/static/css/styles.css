@@ -61,9 +61,17 @@ body {
     padding: 20px;
     margin-top: 20px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: skyblue;
     display: none;
 }
 .details-section h3 {
     margin-top: 0;
+}
+.btn-edit{
+    color: black;
+}
+
+.btn-delete{
+    background-color: rosybrown;
+    color: black;
 }
