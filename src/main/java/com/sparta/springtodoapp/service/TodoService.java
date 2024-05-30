@@ -21,9 +21,10 @@ public class TodoService {
     public Todo createTodo(TodoRequestDto todoRequestDto) {
         String title = todoRequestDto.getTitle();
         String description = todoRequestDto.getDescription();
+        Long userId = todoRequestDto.getUserId();
 
         // 생성자를 사용하여 할일 등록
-        Todo todo = new Todo(title, description);
+        Todo todo = new Todo(title, description, userId);
         return todoRepository.save(todo);
     }
 
@@ -39,10 +40,12 @@ public class TodoService {
 
         String title = todoRequestDto.getTitle();
         String description = todoRequestDto.getDescription();
+        Long userId = todoRequestDto.getUserId();
 
         // 세터를 사용하여 할일 수정
         todo.setTitle(title);
         todo.setDescription(description);
+        todo.setUserId(userId);
         return todoRepository.save(todo);
     }
 

@@ -10,4 +10,5 @@ import lombok.Setter;
 public class TodoRequestDto {
     private String title; // 할일 제목
     private String description; // 할일 내용
+    private Long userId; // 사용자 ID
 }

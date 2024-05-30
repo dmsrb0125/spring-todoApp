@@ -28,6 +28,10 @@ public class Todo {
     private List<Comment> comments; // // 할일과 매핑(할일 : 댓글 -> 1:N 매핑)
 
     @Column(nullable = false)
+    private Long userId; // 사용자 ID
+
+
+    @Column(nullable = false)
     private String title; // 할일 제목(필수입력)
 
     @Column(nullable = false)
@@ -39,9 +43,10 @@ public class Todo {
 
 
     // 할일 등록 생성자
-    public Todo(String title, String description) {
+    public Todo(String title, String description, Long userId) {
         this.title = title;
         this.description = description;
+        this.userId = userId;
     }
 
 }
