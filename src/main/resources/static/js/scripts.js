@@ -1,4 +1,3 @@
-// scripts.js
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('create-form').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -64,6 +63,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('할 일 수정에 실패했습니다.');
             });
     });
+
+    document.getElementById('comment-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const todoId = document.getElementById('edit-id').value;
+        const content = document.getElementById('comment-text').value;
+
+        fetch(`/api/todos/${todoId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content })
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('댓글이 등록되었습니다.');
+                    loadComments(todoId);
+                    document.getElementById('comment-text').value = '';
+                } else {
+                    response.json().then(data => {
+                        console.error('Error:', data);
+                        alert('댓글 등록에 실패했습니다.');
+                    }).catch(() => {
+                        alert('댓글 등록에 실패했습니다.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('댓글 등록에 실패했습니다.');
+            });
+    });
 });
 
 function showDetail(element) {
@@ -75,13 +107,16 @@ function showDetail(element) {
     document.getElementById('detail-description').innerText = description;
     document.getElementById('detail-createdAt').innerText = '작성일: ' + createdAt;
 
-    document.getElementById('edit-id').value = element.getAttribute('data-id');
+    const todoId = element.getAttribute('data-id');
+    document.getElementById('edit-id').value = todoId;
     document.getElementById('edit-title').value = title;
     document.getElementById('edit-description').value = description;
 
     const detailSection = document.getElementById('detail-section');
     detailSection.style.display = 'block';
     detailSection.scrollIntoView({ behavior: 'smooth' });
+
+    loadComments(todoId);
 }
 
 function showEditForm() {
@@ -109,6 +144,25 @@ function deleteTodoFromDetail() {
                 alert('할 일 삭제에 실패했습니다.');
             });
     }
+}
+
+function loadComments(todoId) {
+    fetch(`/api/todos/${todoId}/comments`)
+        .then(response => response.json())
+        .then(comments => {
+            const commentList = document.getElementById('comment-list');
+            commentList.innerHTML = '';
+            comments.forEach(comment => {
+                const li = document.createElement('li');
+                const createdAt = new Date(comment.createdAt);
+                li.textContent = `${comment.content} (작성일: ${createdAt.toLocaleString()})`;
+                commentList.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('댓글 불러오기에 실패했습니다.');
+        });
 }
 
 function deleteTodo(button, event) {

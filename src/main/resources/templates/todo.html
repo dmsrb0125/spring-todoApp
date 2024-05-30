@@ -38,6 +38,12 @@
         <p id="detail-createdAt">작성일</p>
         <button class="btn btn-edit" onclick="showEditForm()">수정하기</button>
         <button class="btn btn-delete" onclick="deleteTodoFromDetail()">삭제하기</button>
+        <h3>댓글</h3>
+        <ul id="comment-list"></ul>
+        <form id="comment-form">
+            <textarea id="comment-text" class="field" placeholder="댓글을 입력해주세요." required></textarea>
+            <button type="submit" class="btn btn-create">댓글 작성</button>
+        </form>
     </div>
     <div class="edit-section" id="edit-section" style="display: none;">
         <h3>일정 수정</h3>
