@@ -4,11 +4,13 @@ import com.sparta.springtodoapp.dto.TodoRequestDto;
 import com.sparta.springtodoapp.entity.Todo;
 import com.sparta.springtodoapp.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -22,7 +24,7 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    // 할일 페이지 연결
+    // 할일 페이지 연결, 전체 할일 조회
     @GetMapping
     public String todo(Model model) {
         List<Todo> todos = todoService.getTodos(); // 저장된 할일 목록들
@@ -37,12 +39,21 @@ public class TodoController {
         return todoService.createTodo(todoRequestDto);
     }
 
+    // 특정 할일 정보 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<Todo> getTodoById(@PathVariable Long id) {
+        Optional<Todo> todo = todoService.getTodoById(id);
+        return todo.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     // 할일 수정 요청
     @PutMapping("/{id}")
-    @ResponseBody
-    public Todo updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto todoRequestDto) {
-        return todoService.updateTodo(id, todoRequestDto);
+    public ResponseEntity<Todo> updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto todoRequestDto) {
+        Optional<Todo> updatedTodo = todoService.updateTodo(id, todoRequestDto);
+        return updatedTodo.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 할일 삭제 요청

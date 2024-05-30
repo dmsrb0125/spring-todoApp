@@ -6,6 +6,7 @@ import com.sparta.springtodoapp.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,12 +20,11 @@ public class TodoService {
 
     // 할일 생성
     public Todo createTodo(TodoRequestDto todoRequestDto) {
-        String title = todoRequestDto.getTitle();
-        String description = todoRequestDto.getDescription();
-        Long userId = todoRequestDto.getUserId();
-
-        // 생성자를 사용하여 할일 등록
-        Todo todo = new Todo(title, description, userId);
+        Todo todo = new Todo(
+                todoRequestDto.getTitle(),
+                todoRequestDto.getDescription(),
+                todoRequestDto.getUserId()
+        ); // 생성자 사용
         return todoRepository.save(todo);
     }
 
@@ -33,24 +33,26 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
+    // 특정 할일 정보 조회
+    public Optional<Todo> getTodoById(Long id) {
+        return todoRepository.findById(id);
+    }   // Optional를 사용하여 구현
+
     // 할일 수정
-    public Todo updateTodo(Long id, TodoRequestDto todoRequestDto) {
-        // 해당 아이디 찾기
-        Todo todo = todoRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 ID의 할 일이 존재하지 않습니다."));
-
-        String title = todoRequestDto.getTitle();
-        String description = todoRequestDto.getDescription();
-        Long userId = todoRequestDto.getUserId();
-
-        // 세터를 사용하여 할일 수정
-        todo.setTitle(title);
-        todo.setDescription(description);
-        todo.setUserId(userId);
-        return todoRepository.save(todo);
+    public Optional<Todo> updateTodo(Long id, TodoRequestDto todoRequestDto) {
+        return todoRepository.findById(id).map(todo -> {
+            // 세터사용
+            todo.setTitle(todoRequestDto.getTitle());
+            todo.setDescription(todoRequestDto.getDescription());
+            todo.setUserId(todoRequestDto.getUserId());
+            return todoRepository.save(todo);
+        }); // Optional를 사용하여 구현
     }
 
     // 할일 삭제
     public void deleteTodo(Long id) {
         todoRepository.deleteById(id);
     }
+
+
 }
