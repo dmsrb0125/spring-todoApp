@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/todos/{todoId}/comments")
@@ -38,6 +39,18 @@ public class CommentController {
         try {
             List<Comment> comments = commentService.getComments(todoId);
             return new ResponseEntity<>(comments, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 선택돤 댓글 수정 요청
+    @PutMapping("/{commentId}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Long todoId, @PathVariable Long commentId, @RequestBody CommentRequestDto requestDto) {
+        try {
+            Optional<Comment> updatedComment = commentService.updateComment(todoId, commentId, requestDto);
+            return updatedComment.map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }

@@ -26,22 +26,67 @@ public class CommentService {
 
     // 댓글 생성
     public Comment createComment(Long todoId, CommentRequestDto requestDto) {
+
+        // 선택한 일정의 ID를 입력 받지 않은 경우 예외 처리
+        if (todoId == null) {
+            throw new IllegalArgumentException("할 일 ID를 입력 해주세요.");
+        }
+
         Optional<Todo> optionalTodo = todoRepository.findById(todoId);
-        Todo todo = optionalTodo.orElseThrow(() -> new IllegalArgumentException("해당 할일Id는 존재하지않습니다."));
+
+        // 유효하지 않은 할 일 ID인 경우 예외 처리
+        Todo todo = optionalTodo.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 할 일 ID입니다"));
+
+        // 댓글 내용이 비어 있는 경우 예외 처리
         String content = requestDto.getContent();
         if (content == null || content.trim().isEmpty()) {
             throw new IllegalArgumentException("댓글을 입력 해주세요.");
         }
 
-
         Comment comment = new Comment(todo, requestDto.getContent(), requestDto.getUserId());
         return commentRepository.save(comment);
     }
+
 
     // 댓글 조회
     public List<Comment> getComments(Long todoId) {
         return commentRepository.findByTodoId(todoId);
     }
 
+    // 댓글 수정
+    public Optional<Comment> updateComment(Long todoId, Long commentId, CommentRequestDto requestDto) {
+
+        // 할 일 Id 입력 받지 못한경우 예외처리
+        if (todoId == null) {
+            throw new IllegalArgumentException("할 일 ID가 null일 수 없습니다");
+        }
+
+        // 댓글 Id 입력 받지 못한경우 예외처리
+        if (commentId == null) {
+            throw new IllegalArgumentException("댓글 ID가 null일 수 없습니다");
+        }
+
+        return commentRepository.findById(commentId).map(comment -> {
+            String content = requestDto.getContent();
+
+            // 매핑된 데이터 아니면 예외처리
+            if (!comment.getTodo().getId().equals(todoId)) {
+                throw new IllegalArgumentException("해당 댓글은 지정된 할 일에 속하지 않습니다");
+            }
+
+            // 선택한 댓글의 사용자가 현재 사용자와 일치하지 않은 경우 예외처리
+            if (!requestDto.getUserId().equals(comment.getUserId())) {
+                throw new IllegalArgumentException("댓글 작성자가 아닙니다");
+            }
+
+            // 댓글 입력이 없을시 예외처리
+            if (content == null || content.trim().isEmpty()) {
+                throw new IllegalArgumentException("댓글 내용을 입력해주세요");
+            }
+
+            comment.setContent(content);
+            return commentRepository.save(comment);
+        });
+    }
 
 }
