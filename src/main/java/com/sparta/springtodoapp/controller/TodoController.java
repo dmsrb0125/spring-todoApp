@@ -30,7 +30,7 @@ public class TodoController {
 
     @GetMapping
     public String todo(Model model) {
-        List<Todo> todos = todoService.getTodos(); // Assume getTodos() returns a list of all todos
+        List<Todo> todos = todoService.getTodos(); // 저장된 할일 목록들
         model.addAttribute("todos", todos);
         return "todo";
     }

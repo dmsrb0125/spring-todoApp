@@ -1,3 +1,4 @@
+// scripts.js
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('create-form').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -31,3 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
+
+function showDetail(element) {
+    const title = element.querySelector('h4').innerText;
+    const description = element.querySelector('.description').innerText;
+    const createdAt = element.querySelector('p').innerText.split('작성일: ')[1];
+
+    document.getElementById('detail-title').innerText = title;
+    document.getElementById('detail-description').innerText = description;
+    document.getElementById('detail-createdAt').innerText = '작성일: ' + createdAt;
+
+    const detailSection = document.getElementById('detail-section');
+    detailSection.style.display = 'block';
+    detailSection.scrollIntoView({ behavior: 'smooth' });
+}

@@ -11,22 +11,31 @@
     <h2>Todo List</h2>
 </div>
 <div class="container">
-    <div class="form-section">
-        <h3>일정 등록</h3>
-        <form id="create-form" method="post" action="/api/todos">
-            <input type="text" class="field" placeholder="할 일 제목" name="title" required>
-            <textarea class="field" placeholder="할 일 내용을 입력해주세요." name="description" cols="30" rows="5" required></textarea>
-            <button type="submit" class="btn btn-create">작성하기</button>
-        </form>
-    </div>
-    <div class="list-section">
-        <h3>등록된 일정</h3>
-        <div id="todo-list">
-            <div th:each="todo : ${todos}" class="todo-item" th:data-id="${todo.id}">
-                <h4 th:text="${todo.title}">할 일 제목</h4>
-                <p th:text="'작성일: ' + ${#temporals.format(todo.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</p>
+    <div class="top-section">
+        <div class="form-section">
+            <h3>일정 등록</h3>
+            <form id="create-form" method="post" action="/api/todos">
+                <input type="text" class="field" placeholder="할 일 제목" name="title" required>
+                <textarea class="field" placeholder="할 일 내용을 입력해주세요." name="description" cols="30" rows="5" required></textarea>
+                <button type="submit" class="btn btn-create">작성하기</button>
+            </form>
+        </div>
+        <div class="list-section">
+            <h3>등록된 일정</h3>
+            <div id="todo-list">
+                <div th:each="todo : ${todos}" class="todo-item card" th:data-id="${todo.id}" onclick="showDetail(this)">
+                    <h4 th:text="${todo.title}">할 일 제목</h4>
+                    <p th:text="'작성일: ' + ${#temporals.format(todo.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</p>
+                    <p class="description" th:text="${todo.description}" style="display:none;"></p>
+                </div>
             </div>
         </div>
+    </div>
+    <div class="details-section" id="detail-section" style="display: none;">
+        <h3>일정 상세 보기</h3>
+        <h4 id="detail-title">제목</h4>
+        <p id="detail-description">내용</p>
+        <p id="detail-createdAt">작성일</p>
     </div>
 </div>
 <script src="/js/scripts.js"></script>

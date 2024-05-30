@@ -1,3 +1,4 @@
+/* styles.css */
 body {
     display: flex;
     flex-direction: column;
@@ -6,13 +7,16 @@ body {
     margin: 0;
 }
 .container {
-    display: flex;
     width: 80%;
     margin-top: 20px;
 }
+.top-section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
 .form-section, .list-section {
-    flex: 1;
-    margin: 10px;
+    width: 48%;
 }
 .field {
     width: 100%;
@@ -32,12 +36,6 @@ body {
 .btn-create {
     background-color: #3498db;
 }
-.btn-edit {
-    background-color: #95a5a6;
-}
-.btn-delete {
-    background-color: #e74c3c;
-}
 .list-section {
     padding-left: 20px;
     border-left: 1px solid #ddd;
@@ -45,65 +43,27 @@ body {
 .list-section h3, .form-section h3 {
     margin-top: 0;
 }
-.memo-item {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
+.card {
+    border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #fff;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
-.memo-item:hover {
+.card:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
 }
 .details-section {
-    width: 80%;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
     margin-top: 20px;
-    margin-bottom: 20px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
     display: none;
 }
-.details-card {
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-    position: relative;
-}
-.details-card h3 {
+.details-section h3 {
     margin-top: 0;
-}
-.details-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.details-meta {
-    text-align: right;
-    font-size: 14px;
-    color: #666;
-}
-.details-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: absolute;
-    right: 20px;
-    bottom: 20px;
-}
-.edit-field {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-}
-.edit-label {
-    display: block;
-    margin-bottom: 5px;
-}
-.edit-form-group {
-    margin-bottom: 15px;
 }
