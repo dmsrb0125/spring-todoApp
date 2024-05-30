@@ -28,11 +28,13 @@ public class CommentService {
     public Comment createComment(Long todoId, CommentRequestDto requestDto) {
         Optional<Todo> optionalTodo = todoRepository.findById(todoId);
         Todo todo = optionalTodo.orElseThrow(() -> new IllegalArgumentException("해당 할일Id는 존재하지않습니다."));
-
         String content = requestDto.getContent();
-        Long userId = requestDto.getUserId();
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("댓글을 입력 해주세요.");
+        }
 
-        Comment comment = new Comment(todo, content, userId);
+
+        Comment comment = new Comment(todo, requestDto.getContent(), requestDto.getUserId());
         return commentRepository.save(comment);
     }
 

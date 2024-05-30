@@ -4,6 +4,8 @@ import com.sparta.springtodoapp.dto.CommentRequestDto;
 import com.sparta.springtodoapp.entity.Comment;
 import com.sparta.springtodoapp.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,14 +23,29 @@ public class CommentController {
 
     // 댓글 생성 요청
     @PostMapping
-    public Comment createComment(@PathVariable Long todoId, @RequestBody CommentRequestDto requestDto) {
-        return commentService.createComment(todoId, requestDto);
+    public ResponseEntity<Comment> createComment(@PathVariable Long todoId, @RequestBody CommentRequestDto requestDto) {
+        try {
+            Comment comment = commentService.createComment(todoId, requestDto);
+            return new ResponseEntity<>(comment, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     // 해당되는 댓글 전체 조회 요청
     @GetMapping
-    public List<Comment> getComments(@PathVariable Long todoId) {
-        return commentService.getComments(todoId);
+    public ResponseEntity<List<Comment>> getComments(@PathVariable Long todoId) {
+        try {
+            List<Comment> comments = commentService.getComments(todoId);
+            return new ResponseEntity<>(comments, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
+    // 예외를 처리할 메서드
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

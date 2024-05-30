@@ -20,11 +20,21 @@ public class TodoService {
 
     // 할일 생성
     public Todo createTodo(TodoRequestDto todoRequestDto) {
-        Todo todo = new Todo(
-                todoRequestDto.getTitle(),
-                todoRequestDto.getDescription(),
-                todoRequestDto.getUserId()
-        ); // 생성자 사용
+        String title = todoRequestDto.getTitle();
+        String description = todoRequestDto.getDescription();
+        Long userId = todoRequestDto.getUserId();
+
+        // 예외처리
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("할일 제목을 입력 해주세요");
+        }
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("할일 내용을 입력 해주세요");
+        }
+        if (userId == null) {
+            throw new IllegalArgumentException("생성자 id를 입력 해주세요.");
+        }
+        Todo todo = new Todo(title, description, userId); // 생성자 사용
         return todoRepository.save(todo);
     }
 
@@ -41,10 +51,20 @@ public class TodoService {
     // 할일 수정
     public Optional<Todo> updateTodo(Long id, TodoRequestDto todoRequestDto) {
         return todoRepository.findById(id).map(todo -> {
+            String title = todoRequestDto.getTitle();
+            String description = todoRequestDto.getDescription();
+
+            // 예외처리
+            if (title == null || title.trim().isEmpty()) {
+                throw new IllegalArgumentException("할일 제목을 입력 해주세요");
+            }
+            if (description == null || description.trim().isEmpty()) {
+                throw new IllegalArgumentException("할일 내용을 입력 해주세요");
+            }
+
             // 세터사용
-            todo.setTitle(todoRequestDto.getTitle());
-            todo.setDescription(todoRequestDto.getDescription());
-            todo.setUserId(todoRequestDto.getUserId());
+            todo.setTitle(title);
+            todo.setDescription(description);
             return todoRepository.save(todo);
         }); // Optional를 사용하여 구현
     }

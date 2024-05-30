@@ -4,6 +4,7 @@ import com.sparta.springtodoapp.dto.TodoRequestDto;
 import com.sparta.springtodoapp.entity.Todo;
 import com.sparta.springtodoapp.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,9 +35,13 @@ public class TodoController {
 
     // 할일 등록 요청
     @PostMapping
-    @ResponseBody
-    public Todo createTodo(@RequestBody TodoRequestDto todoRequestDto) {
-        return todoService.createTodo(todoRequestDto);
+    public ResponseEntity<Todo> createTodo(@RequestBody TodoRequestDto todoRequestDto) {
+        try {
+            Todo todo = todoService.createTodo(todoRequestDto);
+            return new ResponseEntity<>(todo, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     // 특정 할일 정보 조회
@@ -51,16 +56,29 @@ public class TodoController {
     // 할일 수정 요청
     @PutMapping("/{id}")
     public ResponseEntity<Todo> updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto todoRequestDto) {
-        Optional<Todo> updatedTodo = todoService.updateTodo(id, todoRequestDto);
-        return updatedTodo.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            Optional<Todo> updatedTodo = todoService.updateTodo(id, todoRequestDto);
+            return updatedTodo.map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     // 할일 삭제 요청
     @DeleteMapping("/{id}")
-    @ResponseBody
-    public void deleteTodo(@PathVariable Long id) {
-        todoService.deleteTodo(id);
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+        try {
+            todoService.deleteTodo(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    // 예외를 처리할 메서드
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
 
