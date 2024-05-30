@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="header">
+    <h2>Todo List</h2>
+</div>
+<div class="container">
+    <div class="form-section">
+        <h3>일정 등록</h3>
+        <form id="create-form" method="post" action="/memos">
+            <input type="text" class="field" placeholder="할 일 제목" name="title" required>
+            <textarea class="field" placeholder="할 일 내용을 입력해주세요." name="description" cols="30" rows="5" required></textarea>
+            <input type="hidden" name="username" value="placeholderUsername">
+            <button type="submit" class="btn btn-create">작성하기</button>
+        </form>
+    </div>
+    <div class="list-section">
+        <h3>등록된 일정</h3>
+        <div id="memo-list">
+            <div th:each="memo : ${memos}" class="memo-item" th:data-id="${memo.id}" onclick="showDetails(this)">
+                <h4 th:text="${memo.title}">할 일 제목</h4>
+                <p th:text="'작성일: ' + ${memo.createdAt}">작성일</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="details-section" id="details-section">
+    <div id="memo-details" class="details-card">
+        <div class="details-header">
+            <h3 id="details-title">할 일 제목</h3>
+            <div class="details-meta">
+                <p id="details-date">작성일: 날짜</p>
+                <p id="details-username">작성자: 사용자 이름</p>
+            </div>
+        </div>
+        <p id="details-description">할 일 내용</p>
+        <div class="details-actions">
+            <button type="button" class="btn btn-edit" onclick="editMemo()">수정하기</button>
+            <button type="button" class="btn btn-delete" onclick="deleteMemo()">삭제하기</button>
+        </div>
+        <form id="edit-form" style="display:none;" onsubmit="updateMemo(event)">
+            <div class="edit-form-group">
+                <label class="edit-label" for="title">할 일 제목</label>
+                <input type="text" class="edit-field" name="title" placeholder="할 일 제목" required>
+            </div>
+            <div class="edit-form-group">
+                <label class="edit-label" for="description">할 일 내용</label>
+                <textarea class="edit-field" name="description" cols="30" rows="5" placeholder="할 일 내용" required></textarea>
+            </div>
+            <input type="hidden" name="username" value="placeholderUsername">
+            <div class="details-actions">
+                <button type="submit" class="btn btn-edit">저장하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="/js/scripts.js"></script>
+</body>
+</html>
