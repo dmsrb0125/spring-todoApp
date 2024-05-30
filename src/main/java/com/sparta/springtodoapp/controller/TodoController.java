@@ -21,6 +21,12 @@ public class TodoController {
     public TodoController(TodoService todoService) {
         this.todoService = todoService;
     }
+    @GetMapping
+    public String todo(Model model) {
+        List<Todo> todos = todoService.getTodos(); // 저장된 할일 목록들
+        model.addAttribute("todos", todos);
+        return "todo";
+    }
 
     @PostMapping
     @ResponseBody
@@ -28,10 +34,11 @@ public class TodoController {
         return todoService.createTodo(todoRequestDto);
     }
 
-    @GetMapping
-    public String todo(Model model) {
-        List<Todo> todos = todoService.getTodos(); // 저장된 할일 목록들
-        model.addAttribute("todos", todos);
-        return "todo";
+
+    @PutMapping("/{id}")
+    @ResponseBody
+    public Todo updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto todoRequestDto) {
+        return todoService.updateTodo(id, todoRequestDto);
     }
+
 }

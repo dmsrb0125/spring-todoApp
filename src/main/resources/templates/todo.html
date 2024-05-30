@@ -36,6 +36,16 @@
         <h4 id="detail-title">제목</h4>
         <p id="detail-description">내용</p>
         <p id="detail-createdAt">작성일</p>
+        <button class="btn btn-edit" onclick="showEditForm()">수정하기</button>
+    </div>
+    <div class="edit-section" id="edit-section" style="display: none;">
+        <h3>일정 수정</h3>
+        <form id="edit-form">
+            <input type="hidden" id="edit-id">
+            <input type="text" class="field" id="edit-title" placeholder="할 일 제목" required>
+            <textarea class="field" id="edit-description" placeholder="할 일 내용을 입력해주세요." cols="30" rows="5" required></textarea>
+            <button type="submit" class="btn btn-create">수정하기</button>
+        </form>
     </div>
 </div>
 <script src="/js/scripts.js"></script>

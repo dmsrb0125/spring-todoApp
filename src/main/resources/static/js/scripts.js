@@ -31,6 +31,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('할 일 등록에 실패했습니다.');
             });
     });
+
+    document.getElementById('edit-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const id = document.getElementById('edit-id').value;
+        const title = document.getElementById('edit-title').value;
+        const description = document.getElementById('edit-description').value;
+
+        fetch(`/api/todos/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, description })
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('할 일이 수정되었습니다.');
+                    location.reload();
+                } else {
+                    response.json().then(data => {
+                        console.error('Error:', data);
+                        alert('할 일 수정에 실패했습니다.');
+                    }).catch(() => {
+                        alert('할 일 수정에 실패했습니다.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('할 일 수정에 실패했습니다.');
+            });
+    });
 });
 
 function showDetail(element) {
@@ -42,7 +75,31 @@ function showDetail(element) {
     document.getElementById('detail-description').innerText = description;
     document.getElementById('detail-createdAt').innerText = '작성일: ' + createdAt;
 
+    document.getElementById('edit-id').value = element.getAttribute('data-id');
+    document.getElementById('edit-title').value = title;
+    document.getElementById('edit-description').value = description;
+
     const detailSection = document.getElementById('detail-section');
     detailSection.style.display = 'block';
     detailSection.scrollIntoView({ behavior: 'smooth' });
 }
+
+function showEditForm() {
+    document.getElementById('detail-section').style.display = 'none';
+    document.getElementById('edit-section').style.display = 'block';
+}
+
+function editTodoForm(button, event) {
+    event.stopPropagation();
+    const todoItem = button.closest('.todo-item');
+    const id = todoItem.getAttribute('data-id');
+    const title = todoItem.querySelector('h4').innerText;
+    const description = todoItem.querySelector('.description').innerText;
+
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-title').value = title;
+    document.getElementById('edit-description').value = description;
+
+    showEditForm();
+}
+
