@@ -3,11 +3,12 @@ package com.sparta.springtodoapp.service;
 import com.sparta.springtodoapp.dto.CommentRequestDto;
 import com.sparta.springtodoapp.entity.Comment;
 import com.sparta.springtodoapp.entity.Todo;
+import com.sparta.springtodoapp.entity.User;
 import com.sparta.springtodoapp.repository.CommentRepository;
 import com.sparta.springtodoapp.repository.TodoRepository;
+import com.sparta.springtodoapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -17,11 +18,13 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final TodoRepository todoRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, TodoRepository todoRepository) {
+    public CommentService(CommentRepository commentRepository, TodoRepository todoRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.todoRepository = todoRepository;
+        this.userRepository = userRepository;
     }
 
     // 댓글 생성
@@ -43,10 +46,12 @@ public class CommentService {
             throw new IllegalArgumentException("댓글을 입력 해주세요.");
         }
 
-        Comment comment = new Comment(todo, requestDto.getContent(), requestDto.getUserId());
+        Optional<User> userOptional = userRepository.findById(requestDto.getUserId());
+        User user = userOptional.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 유저 ID입니다"));
+
+        Comment comment = new Comment(todo, content, user);
         return commentRepository.save(comment);
     }
-
 
     // 댓글 조회
     public List<Comment> getComments(Long todoId) {
@@ -75,7 +80,9 @@ public class CommentService {
             }
 
             // 선택한 댓글의 사용자가 현재 사용자와 일치하지 않은 경우 예외처리
-            if (!requestDto.getUserId().equals(comment.getUserId())) {
+            Optional<User> userOptional = userRepository.findById(requestDto.getUserId());
+            User user = userOptional.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 유저 ID입니다"));
+            if (!user.equals(comment.getUser())) {
                 throw new IllegalArgumentException("댓글 작성자가 아닙니다");
             }
 
@@ -111,5 +118,4 @@ public class CommentService {
 
         commentRepository.deleteById(commentId);
     }
-
 }

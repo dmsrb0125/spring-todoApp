@@ -1,10 +1,112 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Hello</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script src="/js/basic.js"></script>
+    <title>Todo</title>
 </head>
 <body>
-    <h1>Home</h1>
+<div class="header" style="position:relative;">
+    <div id="login-true" style="display: none">
+        <div id="header-title-login-user">
+            <span id="username"></span> 님의
+        </div>
+        <div id="header-title-todo">
+
+        </div>
+        <a id="logout-text" href="javascript:logout()">
+            로그아웃
+        </a>
+        <a id="todo-link" href="todo.html">To-Do 페이지로 이동</a>
+    </div>
+    <div id="login-false">
+        <div id="header-title-todo">
+            Todo List
+        </div>
+        <a id="sign-text" href="/api/user/signup">
+            회원가입
+        </a>
+        <a id="login-text" href="/api/user/login-page">
+            로그인
+        </a>
+    </div>
+</div>
+
+<form id="login-form">
+    <input type="text" id="login-username" placeholder="Username" class="login-input-box" required>
+    <input type="password" id="login-password" placeholder="Password" class="login-input-box" required>
+    <button type="submit">로그인</button>
+    <div id="login-error" style="display:none; color:red;">로그인에 실패했습니다.</div>
+</form>
+
+<script>
+    let host = 'http://' + window.location.host;
+
+    $(document).ready(function () {
+        const auth = getToken();
+        console.log("Auth token:", auth); // 디버그 로그 추가
+        if(auth === '') {
+            window.location.href = host + "/api/user/login-page";
+        } else {
+            $('#login-true').show();
+            $('#login-false').hide();
+            $('#username').text(getUsernameFromToken(auth)); // 유저네임 표시
+        }
+
+        $('#login-form').submit(function(event) {
+            event.preventDefault();
+            login();
+        });
+    });
+
+    function login() {
+        const username = $('#login-username').val();
+        const password = $('#login-password').val();
+
+        $.ajax({
+            url: host + "/api/user/login",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({username: username, password: password}),
+            success: function(response) {
+                Cookies.set('Authorization', response.token, { path: '/' });
+                window.location.href = "todo.html";
+            },
+            error: function() {
+                $('#login-error').show();
+            }
+        });
+    }
+
+    function logout() {
+        Cookies.remove('Authorization', { path: '/' });
+        window.location.href = host + "/api/user/login-page";
+    }
+
+    function getToken() {
+        let auth = Cookies.get('Authorization');
+        console.log("Retrieved token from cookies:", auth); // 디버그 로그 추가
+
+        if(auth === undefined) {
+            return '';
+        }
+
+        return auth;
+    }
+
+    function getUsernameFromToken(token) {
+        // JWT 디코딩 로직을 구현하세요. 이 예시에서는 토큰을 단순히 반환합니다.
+        // 예를 들어, Base64 디코딩 후 JSON 파싱하여 username을 추출할 수 있습니다.
+        return token; // 실제로는 디코딩 후 username을 반환하도록 수정
+    }
+</script>
 </body>
 </html>

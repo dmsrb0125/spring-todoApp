@@ -2,20 +2,23 @@ package com.sparta.springtodoapp.service;
 
 import com.sparta.springtodoapp.dto.TodoRequestDto;
 import com.sparta.springtodoapp.entity.Todo;
+import com.sparta.springtodoapp.entity.User;
 import com.sparta.springtodoapp.repository.TodoRepository;
+import com.sparta.springtodoapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final UserRepository userRepository;
 
-    public TodoService(TodoRepository todoRepository) {
+    public TodoService(TodoRepository todoRepository, UserRepository userRepository) {
         this.todoRepository = todoRepository;
+        this.userRepository = userRepository;
     }
 
     // 할일 생성
@@ -34,7 +37,11 @@ public class TodoService {
         if (userId == null) {
             throw new IllegalArgumentException("생성자 id를 입력 해주세요.");
         }
-        Todo todo = new Todo(title, description, userId); // 생성자 사용
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        User user = userOptional.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 유저 ID입니다"));
+
+        Todo todo = new Todo(title, description, user); // 생성자 사용
         return todoRepository.save(todo);
     }
 
@@ -73,6 +80,4 @@ public class TodoService {
     public void deleteTodo(Long id) {
         todoRepository.deleteById(id);
     }
-
-
 }

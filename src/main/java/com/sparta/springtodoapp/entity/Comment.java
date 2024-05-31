@@ -27,8 +27,9 @@ public class Comment {
     @JsonBackReference
     private Todo todo; // 할일과 매핑(할일 : 댓글 -> 1:N 매핑)
 
-    @Column(nullable = false)
-    private Long userId; // 사용자 ID
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // 사용자와 매핑(유저 : 댓글 -> 1:N 매핑)
 
     @Column(nullable = false)
     private String content; // 댓글내용
@@ -38,10 +39,9 @@ public class Comment {
     private LocalDateTime createdAt; // 생성일자(자동생성)
 
     // 댓글 등록 생성자
-    public Comment(Todo todo, String content, Long userId) {
+    public Comment(Todo todo, String content, User user) {
         this.todo = todo;
         this.content = content;
-        this.userId = userId;
+        this.user = user;
     }
-
 }
