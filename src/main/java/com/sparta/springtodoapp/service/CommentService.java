@@ -89,4 +89,27 @@ public class CommentService {
         });
     }
 
+    // 댓글 삭제
+    public void deleteComment(Long todoId, Long commentId) {
+        // 할 일 Id 입력 받지 못한경우 예외처리
+        if (todoId == null) {
+            throw new IllegalArgumentException("할 일 ID를 입력 해주세요.");
+        }
+
+        // 댓글 Id 입력 받지 못한경우 예외처리
+        if (commentId == null) {
+            throw new IllegalArgumentException("댓글 ID를 입력 해주세요.");
+        }
+
+        Optional<Comment> commentOptional = commentRepository.findById(commentId);
+        Comment comment = commentOptional.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 댓글 ID입니다: " + commentId));
+
+        // 매핑된 데이터 아니면 예외처리
+        if (!comment.getTodo().getId().equals(todoId)) {
+            throw new IllegalArgumentException("해당 댓글은 지정된 할 일에 속하지 않습니다");
+        }
+
+        commentRepository.deleteById(commentId);
+    }
+
 }

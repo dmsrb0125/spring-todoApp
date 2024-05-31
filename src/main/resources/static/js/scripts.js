@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ content })
+            body: JSON.stringify({ content, userId: 1 }) // 현재 사용자 ID를 설정
         })
             .then(response => {
                 if (response.ok) {
@@ -94,6 +94,41 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => {
                 console.error('Fetch error:', error);
                 alert('댓글 등록에 실패했습니다.');
+            });
+    });
+
+    document.getElementById('comment-edit-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const todoId = document.getElementById('edit-id').value;
+        const commentId = document.getElementById('edit-comment-id').value;
+        const content = document.getElementById('edit-comment-content').value;
+
+        fetch(`/api/todos/${todoId}/comments/${commentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content, userId: 1 }) // 현재 사용자 ID를 설정
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('댓글이 수정되었습니다.');
+                    loadComments(todoId);
+                    document.getElementById('comment-edit-section').style.display = 'none';
+                    document.getElementById('detail-section').style.display = 'block';
+                } else {
+                    response.json().then(data => {
+                        console.error('Error:', data);
+                        alert('댓글 수정에 실패했습니다.');
+                    }).catch(() => {
+                        alert('댓글 수정에 실패했습니다.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('댓글 수정에 실패했습니다.');
             });
     });
 });
@@ -122,6 +157,14 @@ function showDetail(element) {
 function showEditForm() {
     document.getElementById('detail-section').style.display = 'none';
     document.getElementById('edit-section').style.display = 'block';
+}
+
+function showCommentEditForm(commentId, content) {
+    document.getElementById('edit-comment-id').value = commentId;
+    document.getElementById('edit-comment-content').value = content;
+
+    document.getElementById('detail-section').style.display = 'none';
+    document.getElementById('comment-edit-section').style.display = 'block';
 }
 
 function deleteTodoFromDetail() {
@@ -154,8 +197,15 @@ function loadComments(todoId) {
             commentList.innerHTML = '';
             comments.forEach(comment => {
                 const li = document.createElement('li');
+                li.classList.add('comment-item');
                 const createdAt = new Date(comment.createdAt);
-                li.textContent = `${comment.content} (작성일: ${createdAt.toLocaleString()})`;
+                li.innerHTML = `
+                <span class="content">${comment.content} (작성일: ${createdAt.toLocaleString()})</span>
+                <div class="actions">
+                    <button class="btn btn-edit" onclick="showCommentEditForm(${comment.id}, '${comment.content}')">수정</button>
+                    <button class="btn btn-delete" onclick="deleteComment(${todoId}, ${comment.id})">삭제</button>
+                </div>
+            `;
                 commentList.appendChild(li);
             });
         })
@@ -165,26 +215,22 @@ function loadComments(todoId) {
         });
 }
 
-function deleteTodo(button, event) {
-    event.stopPropagation();
-    const todoItem = button.closest('.todo-item');
-    const id = todoItem.getAttribute('data-id');
-
+function deleteComment(todoId, commentId) {
     if (confirm('정말로 삭제하시겠습니까?')) {
-        fetch(`/api/todos/${id}`, {
+        fetch(`/api/todos/${todoId}/comments/${commentId}`, {
             method: 'DELETE'
         })
             .then(response => {
                 if (response.ok) {
-                    alert('할 일이 삭제되었습니다.');
-                    location.reload();
+                    alert('댓글이 삭제되었습니다.');
+                    loadComments(todoId);
                 } else {
-                    alert('할 일 삭제에 실패했습니다.');
+                    alert('댓글 삭제에 실패했습니다.');
                 }
             })
             .catch(error => {
                 console.error('Fetch error:', error);
-                alert('할 일 삭제에 실패했습니다.');
+                alert('댓글 삭제에 실패했습니다.');
             });
     }
 }

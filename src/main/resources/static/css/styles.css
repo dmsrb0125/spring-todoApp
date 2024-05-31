@@ -7,16 +7,13 @@ body {
     margin: 0;
 }
 .container {
+    display: flex;
+    flex-direction: column;
     width: 80%;
     margin-top: 20px;
 }
-.top-section {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-.form-section, .list-section {
-    width: 48%;
+.form-section, .list-section, .details-section, .edit-section, .comment-edit-section {
+    margin: 10px;
 }
 .field {
     width: 100%;
@@ -36,12 +33,11 @@ body {
 .btn-create {
     background-color: #3498db;
 }
-.list-section {
-    padding-left: 20px;
-    border-left: 1px solid #ddd;
+.btn-edit {
+    background-color: #95a5a6;
 }
-.list-section h3, .form-section h3 {
-    margin-top: 0;
+.btn-delete {
+    background-color: #e74c3c;
 }
 .card {
     border: 1px solid #ccc;
@@ -51,28 +47,26 @@ body {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
-.card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
 .details-section {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
     padding: 20px;
-    margin-top: 20px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    border-radius: 5px;
     background-color: #fff;
+}
+.comment-edit-section {
     display: none;
 }
-.details-section h3 {
-    margin-top: 0;
+.comment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
-
-.btn-edit{
-    color: black;
+.comment-item .content {
+    flex: 1;
 }
-
-.btn-delete{
-    background-color: rosybrown;
-    color: black;
+.comment-item .actions {
+    display: flex;
+    gap: 10px;
 }
